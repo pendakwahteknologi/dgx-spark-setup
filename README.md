@@ -42,6 +42,19 @@ The machine should be a fresh DGX Spark (Ubuntu 24.04, aarch64) with NVIDIA driv
 3. A **Cloudflare tunnel token** (create one at https://one.dash.cloudflare.com -> Networks -> Tunnels)
 4. A **Tailscale auth key** (from https://login.tailscale.com/admin/settings/keys)
 
+### Post-setup: register CLI tools
+
+After the setup script completes, authenticate with GitHub and Hugging Face:
+
+```bash
+# GitHub — needed for git push, gh CLI, and private repos
+gh auth login
+
+# Hugging Face — needed for downloading gated models (Llama, Mistral, etc.)
+pip install huggingface-hub
+huggingface-cli login
+```
+
 ### Step-by-step
 
 ```
