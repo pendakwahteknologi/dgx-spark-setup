@@ -1,18 +1,18 @@
-# ATOM System Manager API — systemd service
+# {{HOSTNAME}} System Manager API — systemd service
 #
-# Install: sudo cp atom-manager.service /etc/systemd/system/
+# Install: sudo cp {{HOSTNAME}}-manager.service /etc/systemd/system/
 #          sudo systemctl daemon-reload
-#          sudo systemctl enable --now atom-manager
+#          sudo systemctl enable --now {{HOSTNAME}}-manager
 
 [Unit]
-Description=ATOM System Manager API
+Description={{HOSTNAME}} System Manager API
 After=network.target
 
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/opt/atom-manager
-ExecStart=/opt/atom-manager/venv/bin/uvicorn app:app --host 127.0.0.1 --port 9000
+WorkingDirectory=/opt/{{HOSTNAME}}-manager
+ExecStart=/opt/{{HOSTNAME}}-manager/venv/bin/uvicorn app:app --host 127.0.0.1 --port 9000
 Restart=always
 RestartSec=5
 

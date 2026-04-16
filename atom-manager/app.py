@@ -1,7 +1,7 @@
 """
-ATOM System Manager API
+{{HOSTNAME}} System Manager API
 Provides real-time system stats and service group management.
-Runs as a systemd service on port 9000, proxied via nginx at /atom-api/.
+Runs as a systemd service on port 9000, proxied via nginx at /{{HOSTNAME}}-api/.
 """
 
 from fastapi import FastAPI, HTTPException
@@ -12,7 +12,7 @@ import json
 import time
 import os
 
-app = FastAPI(title="ATOM System Manager")
+app = FastAPI(title="{{HOSTNAME}} System Manager")
 
 SERVICE_GROUPS = {
     "comfyui": {
@@ -48,7 +48,7 @@ SERVICE_GROUPS = {
         "services": [
             {"name": "nginx", "type": "systemd", "label": "Nginx"},
             {"name": "cloudflared", "type": "systemd", "label": "Cloudflare Tunnel"},
-            {"name": "atom-manager", "type": "systemd", "label": "System Manager API"},
+            {"name": "{{HOSTNAME}}-manager", "type": "systemd", "label": "System Manager API"},
         ],
         "docker": [],
         "url": None,
@@ -86,7 +86,7 @@ async def system_stats():
         parts = cpu_line.split()
         idle = int(parts[4])
         total = sum(int(x) for x in parts[1:])
-        prev_file = "/tmp/atom_cpu_prev"
+        prev_file = "/tmp/{{HOSTNAME}}_cpu_prev"
         try:
             with open(prev_file, 'r') as f:
                 prev = json.load(f)

@@ -163,22 +163,23 @@ else
 fi
 
 # ==============================================================================
-# STEP 6: atom-manager (System Manager API)
+# STEP 6: {{HOSTNAME}}-manager (System Manager API)
 # ==============================================================================
 
-log "Step 6: Setting up atom-manager"
-mkdir -p /opt/atom-manager
-render_template "$SCRIPT_DIR/atom-manager/app.py" /opt/atom-manager/app.py
+log "Step 6: Setting up ${HOSTNAME_VAL}-manager"
+mkdir -p "/opt/${HOSTNAME_VAL}-manager"
+render_template "$SCRIPT_DIR/atom-manager/app.py" "/opt/${HOSTNAME_VAL}-manager/app.py"
 
-if [[ ! -d /opt/atom-manager/venv ]]; then
-    python3 -m venv /opt/atom-manager/venv
+if [[ ! -d "/opt/${HOSTNAME_VAL}-manager/venv" ]]; then
+    python3 -m venv "/opt/${HOSTNAME_VAL}-manager/venv"
 fi
-/opt/atom-manager/venv/bin/pip install -q fastapi 'uvicorn[standard]'
+"/opt/${HOSTNAME_VAL}-manager/venv/bin/pip" install -q fastapi 'uvicorn[standard]'
 
-cp "$SCRIPT_DIR/configs/systemd/atom-manager.service" /etc/systemd/system/
+render_template "$SCRIPT_DIR/configs/systemd/atom-manager.service" \
+    "/etc/systemd/system/${HOSTNAME_VAL}-manager.service"
 systemctl daemon-reload
-systemctl enable --now atom-manager
-log "Step 6: atom-manager running on :9000"
+systemctl enable --now "${HOSTNAME_VAL}-manager"
+log "Step 6: ${HOSTNAME_VAL}-manager running on :9000"
 
 # ==============================================================================
 # STEP 7: Dashboard
@@ -259,9 +260,9 @@ info "  Dashboard:     http://localhost:8080/"
 info "  Ollama API:    http://localhost:8080/ollama/"
 info "  ComfyUI:       http://localhost:8080/comfyui/"
 info "  code-server:   http://localhost:8080/code/"
-info "  System API:    http://localhost:8080/atom-api/stats"
+info "  System API:    http://localhost:8080/${HOSTNAME_VAL}-api/stats"
 echo ""
 info "Public URL:      https://${HOSTNAME_VAL}.${DOMAIN}"
 info "Tailscale IP:    $(tailscale ip -4 2>/dev/null || echo 'not connected')"
 echo ""
-info "Check status:    systemctl status ollama comfyui code-server@${USER_VAL} atom-manager nginx cloudflared"
+info "Check status:    systemctl status ollama comfyui code-server@${USER_VAL} ${HOSTNAME_VAL}-manager nginx cloudflared"

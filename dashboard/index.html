@@ -480,7 +480,7 @@ body {
     ];
 
     function fetchStats() {
-        fetch('/atom-api/stats')
+        fetch('/{{HOSTNAME}}-api/stats')
             .then(function(res) {
                 if (!res.ok) throw new Error('Stats API returned ' + res.status);
                 return res.json();
@@ -618,7 +618,7 @@ body {
     };
 
     function fetchServices() {
-        fetch('/atom-api/services')
+        fetch('/{{HOSTNAME}}-api/services')
             .then(function(res) {
                 if (!res.ok) throw new Error('Services API returned ' + res.status);
                 return res.json();
@@ -746,7 +746,7 @@ body {
         var logDiv = document.getElementById('sse-log-' + groupId);
         while (logDiv.firstChild) logDiv.removeChild(logDiv.firstChild);
 
-        fetch('/atom-api/services/' + groupId + '/' + action, { method: 'POST' })
+        fetch('/{{HOSTNAME}}-api/services/' + groupId + '/' + action, { method: 'POST' })
             .then(function(res) {
                 if (!res.ok) throw new Error('Action failed: ' + res.status);
                 var reader = res.body.getReader();

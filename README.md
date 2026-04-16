@@ -12,7 +12,7 @@ This repo contains everything needed to configure a fresh DGX Spark as an AI wor
 | **Ollama** | Local LLM inference API | `:11434` |
 | **ComfyUI** | Image/video generation with Stable Diffusion | `:8188` |
 | **code-server** | VS Code in the browser | `:8443` |
-| **atom-manager** | System stats + service management API (FastAPI) | `:9000` |
+| **{{HOSTNAME}}-manager** | System stats + service management API (FastAPI) | `:9000` |
 | **Cloudflare Tunnel** | Expose services publicly via your domain | - |
 | **Tailscale** | Mesh VPN for private access between devices | - |
 
@@ -22,7 +22,7 @@ All services are exposed under a single domain via nginx on port `8080`:
 
 ```
 /              -> Static dashboard        (/var/www/<HOSTNAME>-main/index.html)
-/atom-api/     -> System Manager API      (localhost:9000/api/)
+/{{HOSTNAME}}-api/  -> System Manager API      (localhost:9000/api/)
 /code/         -> code-server             (localhost:8443)
 /ollama/       -> Ollama API              (localhost:11434)
 /comfyui/      -> ComfyUI                 (localhost:8188)
@@ -101,7 +101,7 @@ configs/
   cloudflared/config.yml     # Cloudflare tunnel config
   ollama/override.conf       # Ollama systemd overrides (GPU tuning)
   systemd/comfyui.service    # ComfyUI systemd unit
-  systemd/atom-manager.service # System manager API unit
+  systemd/atom-manager.service # System manager API unit (installs as {{HOSTNAME}}-manager)
   code-server/config.yaml    # code-server config
 atom-manager/
   app.py                     # FastAPI system manager (stats + service control)
@@ -119,7 +119,7 @@ Tested on:
 
 ## Notes
 
-- The dashboard auto-detects hostname/domain from the `atom-manager` API
+- The dashboard fetches stats from the `{{HOSTNAME}}-manager` API
 - Ollama is tuned for GB10's 128GB unified memory (see `configs/ollama/override.conf`)
 - ComfyUI runs in a conda env — the setup script creates it
 - All services bind to `127.0.0.1` — only nginx is exposed
