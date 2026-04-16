@@ -1,0 +1,22 @@
+# ComfyUI systemd service
+# Replace {{USER}} before installing
+#
+# Install: sudo cp comfyui.service /etc/systemd/system/
+#          sudo systemctl daemon-reload
+#          sudo systemctl enable --now comfyui
+
+[Unit]
+Description=ComfyUI
+After=network.target
+
+[Service]
+Type=simple
+User={{USER}}
+WorkingDirectory=/home/{{USER}}/ComfyUI
+ExecStart=/home/{{USER}}/.conda/envs/comfyui/bin/python main.py --listen 127.0.0.1 --port 8188 --cuda-device 0
+Restart=on-failure
+RestartSec=5
+Environment=PATH=/home/{{USER}}/.conda/envs/comfyui/bin:/usr/local/bin:/usr/bin:/bin
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,17 @@
+# Cloudflare Tunnel config
+# Replace {{TUNNEL_NAME}}, {{TUNNEL_UUID}}, {{HOSTNAME}}, {{DOMAIN}}, and {{USER}}
+#
+# Install: sudo cp config.yml /etc/cloudflared/config.yml
+#
+# To create a tunnel:
+#   cloudflared tunnel login
+#   cloudflared tunnel create {{TUNNEL_NAME}}
+#   cloudflared tunnel route dns {{TUNNEL_NAME}} {{HOSTNAME}}.{{DOMAIN}}
+
+tunnel: {{TUNNEL_NAME}}
+credentials-file: /home/{{USER}}/.cloudflared/{{TUNNEL_UUID}}.json
+
+ingress:
+  - hostname: {{HOSTNAME}}.{{DOMAIN}}
+    service: http://localhost:8080
+  - service: http_status:404

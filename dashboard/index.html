@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{HOSTNAME}} Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800;900&family=DM+Mono:wght@400;500&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg: #080810;
+    --surface: rgba(255,255,255,0.03);
+    --surface-hover: rgba(255,255,255,0.06);
+    --border: rgba(255,255,255,0.07);
+    --border-hover: rgba(255,255,255,0.15);
+    --t1: #f1f5f9;
+    --t2: #94a3b8;
+    --t3: #64748b;
+    --t4: #334155;
+    --red: #E4002B;
+    --cyan: #06B6D4;
+    --green: #22C55E;
+    --yellow: #F59E0B;
+    --bar-bg: rgba(255,255,255,0.06);
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background: var(--bg);
+    color: var(--t1);
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 0;
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+}
+.header {
+    text-align: center;
+    margin-bottom: 48px;
+}
+.header h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 56px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    line-height: 1.1;
+    margin-bottom: 8px;
+}
+.header h1 .red {
+    background: linear-gradient(90deg, #E4002B, #ff4d6d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.header h1 .cyan {
+    background: linear-gradient(90deg, #06B6D4, #22D3EE);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.header .subtitle {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--t3);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 4px;
+}
+.header .domain {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--t4);
+}
+.section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--t3);
+    margin-bottom: 16px;
+}
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 16px 16px;
+}
+.stat-card .stat-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--t3);
+    margin-bottom: 8px;
+}
+.stat-card .stat-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 2px;
+}
+.stat-card .stat-detail {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--t3);
+    margin-bottom: 12px;
+}
+.progress-track {
+    width: 100%;
+    height: 6px;
+    background: var(--bar-bg);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+.progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease, background-color 0.3s ease;
+}
+.gpu-mem-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 12px;
+}
+.gpu-mem-section .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--t3);
+    margin-bottom: 12px;
+}
+.gpu-mem-bar {
+    width: 100%;
+    height: 28px;
+    background: var(--bar-bg);
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    margin-bottom: 10px;
+}
+.gpu-mem-segment {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    min-width: 0;
+    transition: width 0.6s ease;
+}
+.gpu-mem-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.gpu-mem-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--t2);
+}
+.gpu-mem-legend-item .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+.uptime-row {
+    text-align: right;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--t4);
+    margin-bottom: 48px;
+}
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+.service-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.2s, transform 0.2s;
+}
+.service-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+}
+.service-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+.service-card-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.service-card-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+.service-card-desc {
+    font-size: 13px;
+    color: var(--t3);
+    margin-bottom: 16px;
+}
+.service-list {
+    list-style: none;
+    margin-bottom: 20px;
+    flex: 1;
+}
+.service-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 13px;
+}
+.service-list li:last-child { border-bottom: none; }
+.service-list .svc-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--t2);
+}
+.service-list .svc-status {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+}
+.dot-status {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: inline-block;
+}
+.dot-active { background: var(--green); }
+.dot-stopped { background: var(--red); }
+.dot-starting { background: var(--yellow); }
+.dot-unknown { background: var(--t4); }
+.service-card-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+.btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.btn:hover:not(:disabled) { opacity: 0.85; }
+.btn-start { background: var(--green); color: #000; }
+.btn-stop { background: var(--red); color: #fff; }
+.btn-open {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--t2);
+    padding: 7px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    transition: border-color 0.2s, color 0.2s;
+}
+.btn-open:hover {
+    border-color: var(--border-hover);
+    color: var(--t1);
+}
+.sse-log {
+    margin-top: 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--t3);
+    max-height: 120px;
+    overflow-y: auto;
+    line-height: 1.8;
+}
+.sse-log .log-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.sse-log .log-starting { color: var(--yellow); }
+.sse-log .log-active, .sse-log .log-stopped { color: var(--green); }
+.sse-log .log-failed { color: var(--red); }
+.sse-log .log-stopping { color: var(--yellow); }
+.sse-log .log-complete { color: var(--cyan); }
+.error-banner {
+    display: none;
+    background: rgba(228,0,43,0.1);
+    border: 1px solid rgba(228,0,43,0.3);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: #ff6b7f;
+    margin-bottom: 16px;
+    text-align: center;
+}
+.error-banner.visible { display: block; }
+@media (max-width: 1024px) {
+    .stats-row { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+    .container { padding: 24px 16px 48px; }
+    .header h1 { font-size: 40px; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .services-grid { grid-template-columns: 1fr; }
+    .stat-card .stat-value { font-size: 32px; }
+}
+@media (max-width: 480px) {
+    .stats-row { grid-template-columns: 1fr; }
+    .header h1 { font-size: 32px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1><span class="red">{{HOSTNAME}}</span> <span class="cyan">DASHBOARD</span></h1>
+        <div class="subtitle">Grace Blackwell &mdash; DGX Spark</div>
+        <div class="domain">{{HOSTNAME}}.{{DOMAIN}}</div>
+    </div>
+
+    <div id="error-banner" class="error-banner"></div>
+
+    <div class="section-title">System Utilization</div>
+    <div class="stats-row" id="stats-row">
+        <div class="stat-card">
+            <div class="stat-label">CPU</div>
+            <div class="stat-value" id="cpu-value">--</div>
+            <div class="stat-detail" id="cpu-detail">-- cores</div>
+            <div class="progress-track"><div class="progress-fill" id="cpu-bar"></div></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">RAM</div>
+            <div class="stat-value" id="ram-value">--</div>
+            <div class="stat-detail" id="ram-detail">-- / -- GB</div>
+            <div class="progress-track"><div class="progress-fill" id="ram-bar"></div></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">GPU Temperature</div>
+            <div class="stat-value" id="gpu-temp-value">--</div>
+            <div class="stat-detail" id="gpu-temp-detail">&nbsp;</div>
+            <div class="progress-track"><div class="progress-fill" id="gpu-temp-bar"></div></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">GPU Utilization</div>
+            <div class="stat-value" id="gpu-util-value">--</div>
+            <div class="stat-detail" id="gpu-util-detail">&nbsp;</div>
+            <div class="progress-track"><div class="progress-fill" id="gpu-util-bar"></div></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Disk</div>
+            <div class="stat-value" id="disk-value">--</div>
+            <div class="stat-detail" id="disk-detail">-- / -- GB</div>
+            <div class="progress-track"><div class="progress-fill" id="disk-bar"></div></div>
+        </div>
+    </div>
+
+    <div class="gpu-mem-section" id="gpu-mem-section">
+        <div class="section-label">GPU Memory Breakdown</div>
+        <div class="gpu-mem-bar" id="gpu-mem-bar"></div>
+        <div class="gpu-mem-legend" id="gpu-mem-legend"></div>
+    </div>
+
+    <div class="gpu-mem-section" id="network-section">
+        <div class="section-label">Network Access</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;font-family:'DM Mono',monospace;font-size:13px;">
+            <div>
+                <div style="color:var(--t3);font-size:12px;margin-bottom:4px;">PUBLIC</div>
+                <a href="https://{{HOSTNAME}}.{{DOMAIN}}" target="_blank" style="color:var(--cyan);text-decoration:none;" id="net-public">{{HOSTNAME}}.{{DOMAIN}}</a>
+            </div>
+            <div>
+                <div style="color:var(--t3);font-size:12px;margin-bottom:4px;">TAILSCALE</div>
+                <span style="color:var(--green);" id="net-tailscale">--</span>
+            </div>
+            <div>
+                <div style="color:var(--t3);font-size:12px;margin-bottom:4px;">IPv6</div>
+                <span style="color:var(--t2);" id="net-ipv6">--</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="uptime-row" id="uptime-row">Uptime: --</div>
+
+    <div class="section-title">Service Groups</div>
+    <div class="services-grid" id="services-grid"></div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    function percentColor(pct) {
+        if (pct < 60) return 'var(--green)';
+        if (pct < 80) return 'var(--yellow)';
+        return 'var(--red)';
+    }
+
+    function tempColor(temp) {
+        if (temp < 70) return 'var(--green)';
+        if (temp < 85) return 'var(--yellow)';
+        return 'var(--red)';
+    }
+
+    function setBar(el, pct, color) {
+        el.style.width = Math.min(100, Math.max(0, pct)) + '%';
+        el.style.backgroundColor = color;
+    }
+
+    function formatUptime(seconds) {
+        if (!seconds && seconds !== 0) return '--';
+        var d = Math.floor(seconds / 86400);
+        var h = Math.floor((seconds % 86400) / 3600);
+        var m = Math.floor((seconds % 3600) / 60);
+        var parts = [];
+        if (d > 0) parts.push(d + 'd');
+        if (h > 0) parts.push(h + 'h');
+        parts.push(m + 'm');
+        return parts.join(' ');
+    }
+
+    var processColors = [
+        '#E4002B', '#06B6D4', '#F59E0B', '#22C55E', '#8B5CF6',
+        '#EC4899', '#F97316', '#14B8A6', '#6366F1', '#A3E635'
+    ];
+
+    function fetchStats() {
+        fetch('/atom-api/stats')
+            .then(function(res) {
+                if (!res.ok) throw new Error('Stats API returned ' + res.status);
+                return res.json();
+            })
+            .then(function(data) {
+                hideError();
+                updateCPU(data);
+                updateRAM(data);
+                updateGPUTemp(data);
+                updateGPUUtil(data);
+                updateDisk(data);
+                updateGPUMemory(data);
+                updateUptime(data);
+                updateNetwork(data);
+            })
+            .catch(function() {
+                showError('Failed to fetch system stats');
+            });
+    }
+
+    function updateCPU(d) {
+        var pct = d.cpu_percent != null ? d.cpu_percent : 0;
+        document.getElementById('cpu-value').textContent = Math.round(pct) + '%';
+        document.getElementById('cpu-detail').textContent = (d.cpu_cores || '--') + ' cores';
+        setBar(document.getElementById('cpu-bar'), pct, percentColor(pct));
+    }
+
+    function updateRAM(d) {
+        var pct = d.ram_percent != null ? d.ram_percent : 0;
+        var used = d.ram_used_gb != null ? d.ram_used_gb.toFixed(1) : '--';
+        var total = d.ram_total_gb != null ? d.ram_total_gb.toFixed(1) : '--';
+        document.getElementById('ram-value').textContent = Math.round(pct) + '%';
+        document.getElementById('ram-detail').textContent = used + ' / ' + total + ' GB';
+        setBar(document.getElementById('ram-bar'), pct, percentColor(pct));
+    }
+
+    function updateGPUTemp(d) {
+        var temp = d.gpu_temp != null ? d.gpu_temp : 0;
+        document.getElementById('gpu-temp-value').textContent = Math.round(temp) + '\u00B0C';
+        var power = d.gpu_power != null ? d.gpu_power + 'W' : '';
+        document.getElementById('gpu-temp-detail').textContent = power;
+        var pctOfMax = Math.min(100, (temp / 100) * 100);
+        setBar(document.getElementById('gpu-temp-bar'), pctOfMax, tempColor(temp));
+    }
+
+    function updateGPUUtil(d) {
+        var pct = d.gpu_util != null ? d.gpu_util : 0;
+        document.getElementById('gpu-util-value').textContent = Math.round(pct) + '%';
+        var mem = d.gpu_mem_used_mb != null ? Math.round(d.gpu_mem_used_mb) + ' MB used' : '';
+        document.getElementById('gpu-util-detail').textContent = mem;
+        setBar(document.getElementById('gpu-util-bar'), pct, percentColor(pct));
+    }
+
+    function updateDisk(d) {
+        var pct = d.disk_percent != null ? d.disk_percent : 0;
+        var used = d.disk_used_gb != null ? d.disk_used_gb.toFixed(1) : '--';
+        var total = d.disk_total_gb != null ? d.disk_total_gb.toFixed(1) : '--';
+        document.getElementById('disk-value').textContent = Math.round(pct) + '%';
+        document.getElementById('disk-detail').textContent = used + ' / ' + total + ' GB';
+        setBar(document.getElementById('disk-bar'), pct, percentColor(pct));
+    }
+
+    function updateGPUMemory(d) {
+        var bar = document.getElementById('gpu-mem-bar');
+        var legend = document.getElementById('gpu-mem-legend');
+        var procs = d.gpu_processes;
+
+        while (bar.firstChild) bar.removeChild(bar.firstChild);
+        while (legend.firstChild) legend.removeChild(legend.firstChild);
+
+        if (!procs || procs.length === 0) {
+            var noProc = document.createElement('span');
+            noProc.style.fontFamily = 'DM Mono, monospace';
+            noProc.style.fontSize = '11px';
+            noProc.style.color = 'var(--t4)';
+            noProc.textContent = 'No GPU processes';
+            legend.appendChild(noProc);
+            return;
+        }
+
+        var totalMem = 0;
+        for (var i = 0; i < procs.length; i++) totalMem += procs[i].mem_mb;
+        if (totalMem === 0) return;
+
+        for (var j = 0; j < procs.length; j++) {
+            var p = procs[j];
+            var pct = (p.mem_mb / totalMem) * 100;
+            var color = processColors[j % processColors.length];
+
+            var seg = document.createElement('div');
+            seg.className = 'gpu-mem-segment';
+            seg.style.width = pct + '%';
+            seg.style.backgroundColor = color;
+            if (pct > 8) seg.textContent = p.name;
+            bar.appendChild(seg);
+
+            var item = document.createElement('div');
+            item.className = 'gpu-mem-legend-item';
+            var dot = document.createElement('span');
+            dot.className = 'dot';
+            dot.style.backgroundColor = color;
+            item.appendChild(dot);
+            var label = document.createElement('span');
+            label.textContent = p.name + ' (' + p.mem_mb + ' MB)';
+            item.appendChild(label);
+            legend.appendChild(item);
+        }
+    }
+
+    function updateUptime(d) {
+        document.getElementById('uptime-row').textContent = 'Uptime: ' + formatUptime(d.uptime);
+    }
+
+    function updateNetwork(d) {
+        if (d.tailscale_ip) document.getElementById('net-tailscale').textContent = d.tailscale_ip;
+        if (d.ipv6) document.getElementById('net-ipv6').textContent = d.ipv6;
+        if (d.public_url) document.getElementById('net-public').textContent = d.public_url;
+    }
+
+    function showError(msg) {
+        var el = document.getElementById('error-banner');
+        el.textContent = msg;
+        el.classList.add('visible');
+    }
+
+    function hideError() {
+        document.getElementById('error-banner').classList.remove('visible');
+    }
+
+    var groupColors = {
+        comfyui: '#F472B6',
+        codeserver: '#4ADE80',
+        ollama: '#06B6D4',
+        infrastructure: '#F59E0B'
+    };
+
+    function fetchServices() {
+        fetch('/atom-api/services')
+            .then(function(res) {
+                if (!res.ok) throw new Error('Services API returned ' + res.status);
+                return res.json();
+            })
+            .then(function(data) {
+                renderServiceCards(data);
+            })
+            .catch(function() {
+                showError('Failed to fetch service status');
+            });
+    }
+
+    function renderServiceCards(data) {
+        var grid = document.getElementById('services-grid');
+        while (grid.firstChild) grid.removeChild(grid.firstChild);
+        var groupIds = Object.keys(data);
+        for (var i = 0; i < groupIds.length; i++) {
+            var gid = groupIds[i];
+            grid.appendChild(buildServiceCard(gid, data[gid]));
+        }
+    }
+
+    function buildServiceCard(gid, group) {
+        var card = document.createElement('div');
+        card.className = 'service-card';
+        card.id = 'svc-card-' + gid;
+        var color = groupColors[gid] || '#94a3b8';
+        var isActive = !!group.active;
+
+        var header = document.createElement('div');
+        header.className = 'service-card-header';
+        var name;
+        if (group.url) {
+            name = document.createElement('a');
+            name.href = group.url;
+            name.style.textDecoration = 'none';
+        } else {
+            name = document.createElement('div');
+        }
+        name.className = 'service-card-name';
+        name.style.color = color;
+        name.textContent = group.name || gid;
+
+        var dots = document.createElement('div');
+        dots.className = 'service-card-dots';
+        var mainDot = document.createElement('span');
+        mainDot.className = 'dot-status ' + (isActive ? 'dot-active' : 'dot-stopped');
+        mainDot.title = isActive ? 'Active' : 'Stopped';
+        dots.appendChild(mainDot);
+        header.appendChild(name);
+        header.appendChild(dots);
+        card.appendChild(header);
+
+        var desc = document.createElement('div');
+        desc.className = 'service-card-desc';
+        desc.textContent = group.description || '';
+        card.appendChild(desc);
+
+        var services = group.services || [];
+        var ul = document.createElement('ul');
+        ul.className = 'service-list';
+        ul.id = 'svc-list-' + gid;
+        for (var j = 0; j < services.length; j++) {
+            var svc = services[j];
+            var li = document.createElement('li');
+            var svcNameEl = document.createElement('span');
+            svcNameEl.className = 'svc-name';
+            var svcDot = document.createElement('span');
+            svcDot.className = 'dot-status ' + (svc.active ? 'dot-active' : 'dot-stopped');
+            svcNameEl.appendChild(svcDot);
+            var svcLabel = document.createElement('span');
+            svcLabel.textContent = svc.label || svc.name;
+            svcNameEl.appendChild(svcLabel);
+            var svcStatus = document.createElement('span');
+            svcStatus.className = 'svc-status';
+            svcStatus.style.color = svc.active ? 'var(--green)' : 'var(--t4)';
+            svcStatus.textContent = svc.active ? 'active' : 'stopped';
+            li.appendChild(svcNameEl);
+            li.appendChild(svcStatus);
+            ul.appendChild(li);
+        }
+        card.appendChild(ul);
+
+        var logDiv = document.createElement('div');
+        logDiv.className = 'sse-log';
+        logDiv.id = 'sse-log-' + gid;
+        card.appendChild(logDiv);
+
+        var actions = document.createElement('div');
+        actions.className = 'service-card-actions';
+        var actionBtn = document.createElement('button');
+        actionBtn.id = 'svc-btn-' + gid;
+        if (isActive) {
+            actionBtn.className = 'btn btn-stop';
+            actionBtn.textContent = 'Stop';
+            actionBtn.addEventListener('click', (function(id) {
+                return function() { toggleService(id, 'stop'); };
+            })(gid));
+        } else {
+            actionBtn.className = 'btn btn-start';
+            actionBtn.textContent = 'Start';
+            actionBtn.addEventListener('click', (function(id) {
+                return function() { toggleService(id, 'start'); };
+            })(gid));
+        }
+        actions.appendChild(actionBtn);
+        if (group.url) {
+            var openLink = document.createElement('a');
+            openLink.className = 'btn-open';
+            openLink.href = group.url;
+            openLink.textContent = 'Open \u2192';
+            if (!isActive) openLink.style.opacity = '0.4';
+            actions.appendChild(openLink);
+        }
+        card.appendChild(actions);
+        return card;
+    }
+
+    function toggleService(groupId, action) {
+        var btn = document.getElementById('svc-btn-' + groupId);
+        if (!btn) return;
+        var isStart = action === 'start';
+        btn.disabled = true;
+        btn.textContent = isStart ? 'Starting...' : 'Stopping...';
+        var logDiv = document.getElementById('sse-log-' + groupId);
+        while (logDiv.firstChild) logDiv.removeChild(logDiv.firstChild);
+
+        fetch('/atom-api/services/' + groupId + '/' + action, { method: 'POST' })
+            .then(function(res) {
+                if (!res.ok) throw new Error('Action failed: ' + res.status);
+                var reader = res.body.getReader();
+                var decoder = new TextDecoder();
+                var buffer = '';
+
+                function processBuffer(buf) {
+                    var lines = buf.split('\n');
+                    var remainder = '';
+                    for (var i = 0; i < lines.length; i++) {
+                        var line = lines[i];
+                        if (i === lines.length - 1 && !buf.endsWith('\n')) {
+                            remainder = line;
+                            continue;
+                        }
+                        if (line.indexOf('data:') === 0) {
+                            var jsonStr = line.substring(5).trim();
+                            if (jsonStr) {
+                                try {
+                                    var evt = JSON.parse(jsonStr);
+                                    handleSSEEvent(groupId, evt);
+                                } catch (e) {}
+                            }
+                        }
+                    }
+                    return remainder;
+                }
+
+                function read() {
+                    reader.read().then(function(result) {
+                        if (result.done) {
+                            if (buffer) processBuffer(buffer + '\n');
+                            onStreamComplete(groupId);
+                            return;
+                        }
+                        buffer += decoder.decode(result.value, { stream: true });
+                        buffer = processBuffer(buffer);
+                        read();
+                    }).catch(function() {
+                        onStreamComplete(groupId);
+                    });
+                }
+                read();
+            })
+            .catch(function() {
+                btn.disabled = false;
+                btn.textContent = isStart ? 'Start' : 'Stop';
+                showError('Failed to ' + action + ' ' + groupId);
+            });
+    }
+
+    function handleSSEEvent(groupId, evt) {
+        var logDiv = document.getElementById('sse-log-' + groupId);
+        if (!logDiv) return;
+        var line = document.createElement('div');
+        line.className = 'log-line log-' + (evt.status || '');
+        if (evt.status === 'complete') {
+            line.textContent = 'Complete';
+        } else {
+            var sym = '';
+            if (evt.status === 'active' || evt.status === 'stopped') sym = '[OK] ';
+            else if (evt.status === 'failed') sym = '[FAIL] ';
+            else if (evt.status === 'starting' || evt.status === 'stopping') sym = '[...] ';
+            line.textContent = sym + (evt.service || '') + ' \u2014 ' + (evt.status || '');
+            updateServiceDot(groupId, evt.service, evt.status);
+        }
+        logDiv.appendChild(line);
+        logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    function updateServiceDot(groupId, serviceName, status) {
+        if (!serviceName) return;
+        var list = document.getElementById('svc-list-' + groupId);
+        if (!list) return;
+        var items = list.getElementsByTagName('li');
+        for (var i = 0; i < items.length; i++) {
+            var nameSpan = items[i].querySelector('.svc-name span:last-child');
+            if (!nameSpan) continue;
+            var labelText = nameSpan.textContent;
+            if (labelText === serviceName || serviceName.indexOf(labelText) !== -1 || labelText.indexOf(serviceName) !== -1) {
+                var dot = items[i].querySelector('.dot-status');
+                var statusSpan = items[i].querySelector('.svc-status');
+                if (dot) {
+                    dot.className = 'dot-status';
+                    if (status === 'active') dot.classList.add('dot-active');
+                    else if (status === 'stopped' || status === 'failed') dot.classList.add('dot-stopped');
+                    else dot.classList.add('dot-starting');
+                }
+                if (statusSpan) {
+                    statusSpan.textContent = status;
+                    if (status === 'active') statusSpan.style.color = 'var(--green)';
+                    else if (status === 'starting' || status === 'stopping') statusSpan.style.color = 'var(--yellow)';
+                    else if (status === 'failed') statusSpan.style.color = 'var(--red)';
+                    else statusSpan.style.color = 'var(--t4)';
+                }
+                break;
+            }
+        }
+    }
+
+    function onStreamComplete(groupId) {
+        setTimeout(fetchServices, 500);
+    }
+
+    fetchStats();
+    fetchServices();
+    setInterval(fetchStats, 3000);
+})();
+</script>
+</body>
+</html>
